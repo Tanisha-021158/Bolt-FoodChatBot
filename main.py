@@ -26,13 +26,40 @@ async def handle_request(request: Request):
     intent_handling_dict={
         "track.order-context: ongoing tracking":track_order,
         "order.complete-context: ongoing-order":complete_order,
-        # "order.remove-context:ongoing-order":remove_from_order,
+        "order.remove-context:ongoing-order":remove_from_order,
         "order.add-context:ongoing-order":add_order
     }
 
     return intent_handling_dict[intent](parameters,session_id)
 
+def remove_from_order(parameters:dict,session_id:str):
+    if session_id not in in_progress_order:
+        return JSONResponse(content={"fulfillmentText": "Sorry could find order..place your order again.."})
+    current_order=in_progress_order[session_id]
 
+    food_items=parameters["food-item"]
+    removed_items=[]
+    no_such_items=[]
+    for item in food_items:
+        if item not in current_order:
+            no_such_items.append(item)
+        else:
+            removed_items.append(item)
+            del current_order[item]
+
+    if len(removed_items)>0:
+        fulfillment_text=f"Removed {", ".join(removed_items)} from your order. "
+    
+    if len(no_such_items)>0:
+        fulfillment_text=f"Your current order doesnot have {", ".join(no_such_items)}"
+    
+    if len(current_order.keys())==0:
+        fulfillment_text+="Your order is empty."
+    else:
+        order_str=generic_helper.get_str_from_food_dict(current_order)
+        fulfillment_text+=f"Your order is {order_str}"
+
+    return JSONResponse(content={"fulfillmentText": fulfillment_text})
 
 def add_order(parameters:dict,session_id:str):
     food_items=parameters["food-item"]
