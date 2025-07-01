@@ -1,16 +1,44 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Food ChatBot</title>
-  <link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <title>Pandeyji Eatery</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 </head>
 <body>
-  <h1>Welcome to the Food ChatBot</h1>
-  <p>Talk to our bot below 👇</p>
-  <iframe
-    allow="microphone;"
-    width="350"
-    height="430"
-    src="https://console.dialogflow.com/api-client/demo/embedded/7ccf00b7-c13d-4e62-b99b-9eac05eed612">
-  </iframe>
+
+    <header>
+        <h1>🍽️ Welcome to <span class="highlight">Pandeyji Eatery</span></h1>
+        <p>Your personal food assistant</p>
+    </header>
+
+    <section class="menu-section">
+        <h2>Our Menu</h2>
+        <div class="menu-grid">
+            <div class="menu-item"><span>Pav Bhaji</span><span>$6.00</span></div>
+            <div class="menu-item"><span>Chole Bhature</span><span>$7.00</span></div>
+            <div class="menu-item"><span>Pizza</span><span>$8.00</span></div>
+            <div class="menu-item"><span>Mango Lassi</span><span>$5.00</span></div>
+            <div class="menu-item"><span>Masala Dosa</span><span>$6.00</span></div>
+            <div class="menu-item"><span>Vegetable Biryani</span><span>$9.00</span></div>
+            <div class="menu-item"><span>Vada Pav</span><span>$4.00</span></div>
+            <div class="menu-item"><span>Rava Dosa</span><span>$7.00</span></div>
+            <div class="menu-item"><span>Samosa</span><span>$5.00</span></div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Powered by <strong>Dialogflow</strong> & <strong>FastAPI</strong></p>
+    </footer>
+
+    <!-- Floating Chatbot -->
+    <df-messenger
+        intent="WELCOME"
+        chat-title="Bolt-chatbot-for-food-delivery"
+        agent-id="7ccf00b7-c13d-4e62-b99b-9eac05eed612"
+        language-code="en">
+    </df-messenger>
+
 </body>
 </html>

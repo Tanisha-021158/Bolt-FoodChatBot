@@ -1,15 +1,76 @@
+/* General body styling */
 body {
-  background-color: #f4f4f4;
-  font-family: sans-serif;
-  text-align: center;
-  margin: 40px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    color: #333;
 }
 
+/* Header styling */
 h1 {
-  color: #2c3e50;
+    color: #1d3557;
+    font-size: 2.8em;
+    margin-top: 40px;
 }
 
-iframe {
-  border: none;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+h2 {
+    font-size: 1.8em;
+    color: #333;
+}
+
+h3 {
+    margin-top: 20px;
+    font-size: 1.5em;
+    color: #457b9d;
+}
+
+/* Menu list styling */
+ul.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px auto;
+    display: inline-block;
+    text-align: left;
+}
+
+ul.menu-list li {
+    font-size: 1.2em;
+    margin: 10px 0;
+    color: #2d3142;
+    padding: 10px 15px;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s, transform 0.3s;
+    cursor: pointer;
+}
+
+ul.menu-list li:hover {
+    background-color: #dbe3f3;
+    transform: scale(1.02);
+}
+
+/* Footer styling */
+.footer {
+    margin-top: 40px;
+    font-size: 1em;
+    color: #888;
+}
+
+/* Dialogflow Messenger custom style */
+df-messenger {
+    --df-messenger-chat-background-color: #ffffff;
+    --df-messenger-button-titlebar-color: #1d3557;
+    --df-messenger-font-color: #000000;
+    --df-messenger-send-icon: #1d3557;
+    --df-messenger-user-message: #f1faee;
+    --df-messenger-bot-message: #dbe3f3;
+    --df-messenger-chat-width: 300px;
+    --df-messenger-chat-height: 400px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
 }

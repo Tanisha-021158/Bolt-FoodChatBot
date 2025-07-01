@@ -163,3 +163,31 @@ def insert_order_tracking(order_id, status):
     return 1
 
 
+def get_items_in_order(order_id: int):
+    try:
+        cnx = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='Door#@mirror555',
+            database='pandeyji_eatery'
+        )
+        cursor = cnx.cursor()
+        query = """
+            SELECT fi.name, o.quantity
+            FROM orders o
+            JOIN food_items fi ON o.item_id = fi.item_id
+            WHERE o.order_id = %s
+        """
+        cursor.execute(query, (order_id,))
+        results = cursor.fetchall()
+        return {name: qty for name, qty in results}
+
+    except mysql.connector.Error as err:
+        print("MySQL Error:", err)
+        return None
+
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'cnx' in locals() and cnx.is_connected():
+            cnx.close()

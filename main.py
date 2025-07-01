@@ -30,10 +30,43 @@ async def handle_request(request: Request):
         "track.order-context: ongoing tracking": track_order,
         "order.complete-context: ongoing-order": complete_order,
         "order.remove-context:ongoing-order": remove_from_order,
-        "order.add-context:ongoing-order": add_order
+        "order.add-context:ongoing-order": add_order,
+        "get.order.summary": get_order_summary
+
     }
 
     return intent_handling_dict[intent](parameters, session_id)
+
+
+def get_order_summary(parameters: dict, session_id: str):
+    # Get the last placed order ID
+    order_id = db_management.get_max_order_id()
+    if order_id!=1:
+        order_id = db_management.get_max_order_id()-1
+    print("Getting summary for order ID:", order_id)
+
+    # Fetch total price and status
+    total_price = db_management.get_total_order_price(order_id)
+    status = db_management.get_order_status(order_id)
+
+    # Fetch item list from 'orders' table
+    order_items = db_management.get_items_in_order(order_id)
+
+    if total_price is None or status is None or not order_items:
+        return JSONResponse(content={"fulfillmentText": "Sorry! Could not retrieve your latest order summary."})
+
+    # Format items nicely
+    items_str = "\n".join([f"{item}: {qty}" for item, qty in order_items.items()])
+
+    fulfillment_text = (
+        f"Here is your order summary:\n"
+        f"Order ID: {order_id}\n"
+        f"Items:\n{items_str}\n"
+        f"Total Price: ${total_price}\n"
+        f"Status: {status}"
+    )
+
+    return JSONResponse(content={"fulfillmentText": fulfillment_text})
 
 def remove_from_order(parameters: dict, session_id: str):
     if session_id not in in_progress_order:
@@ -81,6 +114,14 @@ def add_order(parameters: dict, session_id: str):
         fulfillment_text = f"So far you have: {order_str}. Do you want anything else?"
 
     return JSONResponse(content={"fulfillmentText": fulfillment_text})
+def save_to_db(order: dict):
+    next_order_id = db_management.get_max_order_id()
+    for food_item, quantity in order.items():
+        rcode = db_management.insert_order_item(food_item, quantity, next_order_id)
+        if rcode == -1:
+            return -1
+    db_management.insert_order_tracking(next_order_id, "in progress")
+    return next_order_id
 
 def complete_order(parameters: dict, session_id: str):
     if session_id not in in_progress_order:
@@ -88,6 +129,7 @@ def complete_order(parameters: dict, session_id: str):
 
     order = in_progress_order[session_id]
     order_id = save_to_db(order)
+    print("Saved to database")
 
     if order_id == -1:
         fulfillment_text = "Could not place your order due to backend issue. Please place a new order."
@@ -98,14 +140,7 @@ def complete_order(parameters: dict, session_id: str):
     del in_progress_order[session_id]
     return JSONResponse(content={"fulfillmentText": fulfillment_text})
 
-def save_to_db(order: dict):
-    next_order_id = db_management.get_max_order_id()
-    for food_item, quantity in order.items():
-        rcode = db_management.insert_order_item(food_item, quantity, next_order_id)
-        if rcode == -1:
-            return -1
-    db_management.insert_order_tracking(next_order_id, "in progress")
-    return next_order_id
+
 
 def track_order(parameters: dict, session_id: str):
     order_id = int(parameters["order_id"])
